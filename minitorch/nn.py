@@ -51,7 +51,7 @@ try:
     from minitorch.cuda_kernel_ops import CudaKernelOps
     max_reduce = CudaKernelOps.reduce(operators.max, -1e9)
 except:
-    raise NotImplementedError("Reduce Function Not Implemented Yet")
+    # raise NotImplementedError("Reduce Function Not Implemented Yet")
     print("cuda kernels not implemented: combine.so not found")
 
 

@@ -5,7 +5,7 @@ import numpy as np
 from hypothesis import given
 from hypothesis.strategies import DataObject, data, lists, permutations
 
-from minitorch import MathTestVariable, Tensor, grad_check, tensor, topological_sort
+from minitorch import MathTestVariable, Tensor, tensor, grad_check, topological_sort
 
 from .strategies import assert_close, small_floats
 from .tensor_strategies import shaped_tensors, tensors
