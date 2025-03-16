@@ -286,6 +286,7 @@ __global__ void mapKernel(
     
     /// BEGIN ASSIGN1_2
     /// TODO
+    
     // Hints:
     // 1. Compute the position in the output array that this thread will write to
     // 2. Convert the position to the out_index according to out_shape
@@ -293,8 +294,21 @@ __global__ void mapKernel(
     // 4. Calculate the position of element in in_array according to in_index and in_strides
     // 5. Calculate the position of element in out_array according to out_index and out_strides
     // 6. Apply the unary function to the input element and write the output to the out memory
-    
-    assert(false && "Not Implemented");
+    int out_pos = threadIdx.x + (blockDim.x * blockIdx.x);
+    if (out_pos < out_size) {
+      to_index(out_pos, out_shape, out_index, shape_size);
+      broadcast_index(
+        out_index,
+        out_shape, 
+        in_shape,
+        in_index,
+        shape_size, 
+        shape_size
+      );
+      int in_pos = index_to_position(in_index, in_strides, shape_size);
+      int out_pos_2 = index_to_position(out_index, out_strides, shape_size);
+      out[out_pos_2] = fn(fn_id, in_storage[out_pos]);
+    }
     /// END ASSIGN1_2
 }
 
