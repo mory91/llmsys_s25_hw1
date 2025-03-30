@@ -55,6 +55,7 @@ class CudaKernelOps(TensorOps):
         def ret(a: Tensor, out: Optional[Tensor] = None) -> Tensor:
             if out is None:
                 out = a.zeros(a.shape)
+                print(a, fn)
 
             # Define the argument type for the tensorMap function
             lib.tensorMap.argtypes = [
@@ -124,8 +125,24 @@ class CudaKernelOps(TensorOps):
             # BEGIN ASSIGN1_2
             # TODO
             # 1. Call the tensorZip function implemented in CUDA
-
-            raise NotImplementedError("Zip Function Not Implemented Yet")
+            lib.tensorZip(
+                out._tensor._storage,
+                out._tensor._shape.astype(np.int32),
+                out._tensor._strides.astype(np.int32),
+                out.size,
+                len(out.shape),
+                a._tensor._storage,
+                a._tensor._shape.astype(np.int32),
+                a._tensor._strides.astype(np.int32),
+                a.size,
+                len(a.shape),
+                b._tensor._storage,
+                b._tensor._shape.astype(np.int32),
+                b._tensor._strides.astype(np.int32),
+                b.size,
+                len(b.shape),
+                fn_id
+            )
             # END ASSIGN1_2
             
             return out
@@ -164,8 +181,19 @@ class CudaKernelOps(TensorOps):
             # BEGIN ASSIGN1_2
             # TODO
             # 1. Call the tensorReduce function implemented in CUDA
-            
-            raise NotImplementedError("Reduce Function Not Implemented Yet")
+            lib.tensorRecude(
+                out._tensor._storage,
+                out._tensor._shape.astype(np.int32),
+                out._tensor._strides.astype(np.int32),
+                out.size,
+                a._tensor._storage,
+                a._tensor._shape.astype(np.int32),
+                a._tensor._strides.astype(np.int32),
+                dim,
+                0,
+                len(a.shape),
+                fn_id
+            )
             # END ASSIGN1_2
             
             return out
