@@ -449,21 +449,22 @@ __global__ void zipKernel(
     // 8. Apply the binary function to the input elements in a_array & b_array and write the output to the out memory
     int out_pos = threadIdx.x + (blockDim.x * blockIdx.x);
     if (out_pos < out_size) {
+      to_index(out_pos, out_shape, out_index, out_shape_size);
       broadcast_index(
-        a_index,
-        a_shape,
-        out_shape, 
         out_index,
-        a_shape_size, 
+        out_shape,
+        a_shape,
+        a_index,
+        a_shape_size,
         out_shape_size
       );
       int a_pos = index_to_position(a_index, a_strides, a_shape_size);
       broadcast_index(
-        b_index,
-        b_shape,
-        out_shape, 
         out_index,
-        b_shape_size, 
+        out_shape,
+        b_shape,
+        b_index,
+        b_shape_size,
         out_shape_size
       );
       int b_pos = index_to_position(b_index, b_strides, b_shape_size);
