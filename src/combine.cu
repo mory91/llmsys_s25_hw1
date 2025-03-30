@@ -306,8 +306,9 @@ __global__ void mapKernel(
         shape_size
       );
       int in_pos = index_to_position(in_index, in_strides, shape_size);
-      int out_pos_2 = index_to_position(out_index, out_strides, shape_size);
-      out[out_pos_2] = fn(fn_id, in_storage[out_pos]);
+      out[out_pos] = fn(fn_id, in_storage[in_pos]);
+     printf("out[%d] = %f - ", out_pos, out[out_pos]);
+
     }
     /// END ASSIGN1_2
 }
@@ -364,8 +365,24 @@ __global__ void reduceKernel(
     // 3. Initialize the reduce_value to the output element
     // 4. Iterate over the reduce_dim dimension of the input array to compute the reduced value
     // 5. Write the reduced value to out memory
-    
-    assert(false && "Not Implemented");
+    int out_pos = threadIdx.x + (blockDim.x * blockIdx.x);
+    if(out_pos < out_size) {
+      to_index(out_pos, out_shape, out_index, shape_size);
+      reduce_value = out[index_to_position(out_index, out_strides, shape_size)];
+      int start_pos = 0;
+      int j = 0;
+      while (j < shape_size) {
+	if (j != reduce_dim) {
+		start_pos += out_index[j] * a_strides[j];
+	}
+	j++;
+      }
+      for (int i = 0; i < a_shape[reduce_dim]; i++) {
+	start_pos += a_strides[reduce_dim] * i;
+      	reduce_value = fn(fn_id, a_storage[start_pos], reduce_value);
+      }
+      out[index_to_position(out_index, out_strides, shape_size)] = reduce_value;
+    }
     /// END ASSIGN1_2
 }
 
@@ -430,8 +447,28 @@ __global__ void zipKernel(
     // 6. Broadcast the out_index to the b_index according to b_shape
     // 7.Calculate the position of element in b_array according to b_index and b_strides
     // 8. Apply the binary function to the input elements in a_array & b_array and write the output to the out memory
-    
-    assert(false && "Not Implemented");
+    int out_pos = threadIdx.x + (blockDim.x * blockIdx.x);
+    if (out_pos < out_size) {
+      broadcast_index(
+        a_index,
+        a_shape,
+        out_shape, 
+        out_index,
+        a_shape_size, 
+        out_shape_size
+      );
+      int a_pos = index_to_position(a_index, a_strides, a_shape_size);
+      broadcast_index(
+        b_index,
+        b_shape,
+        out_shape, 
+        out_index,
+        b_shape_size, 
+        out_shape_size
+      );
+      int b_pos = index_to_position(b_index, b_strides, b_shape_size);
+      out[out_pos] = fn(fn_id, a_storage[a_pos], b_storage[b_pos]);
+    }
     /// END ASSIGN1_2
 }
 
