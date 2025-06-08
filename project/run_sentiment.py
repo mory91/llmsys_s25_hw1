@@ -33,9 +33,9 @@ class Linear(minitorch.Module):
         # 2. Initialize self.bias to be a random parameter of (out_size)
         # 3. Set self.out_size to be out_size
         # HINT: make sure to use the RParam function
-    
-        raise NotImplementedError
-    
+        self.weight = RParam(in_size, out_size)
+        self.bias = RParam(out_size)
+        self.out_size = out_size
         # END ASSIGN1_3
 
     def forward(self, x):
@@ -49,9 +49,7 @@ class Linear(minitorch.Module):
         # 3. Apply Matrix Multiplication on input x and self.weights, and reshape the output to be of size (batch, self.out_size)
         # 4. Add self.bias
         # HINT: You can use the view function of minitorch.tensor for reshape
-
-        raise NotImplementedError
-    
+        return (x.view(batch, in_size) @ self.weight.value.view(in_size, self.out_size)).view(batch, self.out_size) + self.bias.value
         # END ASSIGN1_3
         
         
@@ -82,8 +80,8 @@ class Network(minitorch.Module):
         # BEGIN ASSIGN1_3
         # TODO
         # 1. Construct two linear layers: the first one is embedding_dim * hidden_dim, the second one is hidden_dim * 1
-
-        raise NotImplementedError
+        self.linear1 = Linear(embedding_dim, hidden_dim)
+        self.linear2 = Linear(hidden_dim, 1)
         # END ASSIGN1_3
         
         
@@ -101,9 +99,14 @@ class Network(minitorch.Module):
         # 4. Apply the second linear layer
         # 5. Apply sigmoid and reshape to (batch)
         # HINT: You can use minitorch.dropout for dropout, and minitorch.tensor.relu for ReLU
-        
-        raise NotImplementedError
-    
+        b, s, d = embeddings.shape
+        sentence_avg = embeddings.mean(dim=1).view(b, d)
+        out = self.linear1(sentence_avg)
+        out = minitorch.dropout(out, rate=self.dropout_prob)
+        out = out.relu()
+        out = self.linear2(out)
+        out = out.sigmoid().view(b)
+        return out
         # END ASSIGN1_3
 
 
