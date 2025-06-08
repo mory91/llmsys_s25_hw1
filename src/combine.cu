@@ -415,7 +415,6 @@ __global__ void reduceKernel(
       int start_pos = 0;
       for (int j = 0; j < shape_size; j++) {
         start_pos += out_index[j] * a_strides[j];
-        j++;
       }
       for (int i = 0; i < a_shape[reduce_dim]; i++) {
         int pos = start_pos + i * a_strides[reduce_dim];
