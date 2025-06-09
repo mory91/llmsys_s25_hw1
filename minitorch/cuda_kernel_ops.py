@@ -55,7 +55,6 @@ class CudaKernelOps(TensorOps):
         def ret(a: Tensor, out: Optional[Tensor] = None) -> Tensor:
             if out is None:
                 out = a.zeros(a.shape)
-                print(a, fn)
 
             # Define the argument type for the tensorMap function
             lib.tensorMap.argtypes = [
